@@ -18,6 +18,9 @@ jobs:
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
+      - name: Install Dependency
+        working-directory: frontend
+        run: npm install
       - name: Linting Job
         working-directory: frontend
         run: npm run lint
