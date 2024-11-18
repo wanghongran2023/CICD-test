@@ -87,6 +87,10 @@ jobs:
       - Build
     steps:
       - name: Deploy
-        run: echo "Run Deploy"
+        working-directory: frontend/k8s
+        run: |
+          GIT_SHA=$(git rev-parse --short HEAD)
+          kustomize edit set image frontend=399608680309.dkr.ecr.us-east-1.amazonaws.com/frontend:$GIT_SHA
+          kustomize build | kubectl apply -f -
         
 
