@@ -1,10 +1,10 @@
-name: frontend-cd
+name: backend-cd
 
 on:
   push:
     branches: ["main"]
     paths:
-      - 'frontend/**'
+      - 'backend/**'
   workflow_dispatch:
 
 jobs:
@@ -16,12 +16,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Dependency
-        working-directory: frontend
-        run: npm ci
+        working-directory: backend
+        run: pipenv install
 
       - name: Linting Job
-        working-directory: frontend
-        run:  npm run lint
+        working-directory: backend
+        run:  pipenv run lint
         continue-on-error: false
 
   Test:
@@ -31,26 +31,13 @@ jobs:
       - name: Code Checkout
         uses: actions/checkout@v4
       
-      - name: Set Up Nvm
-        working-directory: frontend
-        run: |
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
-
-      - name: Use Correct NodeJS Version
-        working-directory: frontend
-        run: |
-          export NVM_DIR="$HOME/.nvm"
-          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-          nvm install
-          nvm use
-
       - name: Install Dependency
-        working-directory: frontend
-        run: npm ci
+        working-directory: backend
+        run: pipenv install
 
       - name: Run Test
-        working-directory: frontend
-        run: npm test
+        working-directory: backend
+        run: pipenv run test
         continue-on-error: false
 
   Build:
@@ -67,12 +54,12 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build Image and Push
-        working-directory: frontend
+        working-directory: backend
         run: |
           GIT_SHA=$(git rev-parse --short HEAD)
-          docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=frontend:${GIT_SHA} .
-          REPOSITORY_URI=$(aws ecr describe-repositories --repository-names frontend --region us-east-1 --query "repositories[0].repositoryUri" --output text)
-          docker tag frontend:${GIT_SHA} $REPOSITORY_URI:${GIT_SHA}
+          docker build --tag=backend:${GIT_SHA} .
+          REPOSITORY_URI=$(aws ecr describe-repositories --repository-names backend --region us-east-1 --query "repositories[0].repositoryUri" --output text)
+          docker tag backend:${GIT_SHA} $REPOSITORY_URI:${GIT_SHA}
           docker push $REPOSITORY_URI:${GIT_SHA}
 
     env:
@@ -114,10 +101,10 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Deploy
-        working-directory: frontend/k8s
+        working-directory: backend/k8s
         run: |
           GIT_SHA=$(git rev-parse --short HEAD)
-          kustomize edit set image frontend=399608680309.dkr.ecr.us-east-1.amazonaws.com/frontend:$GIT_SHA
+          kustomize edit set image frontend=399608680309.dkr.ecr.us-east-1.amazonaws.com/backend:$GIT_SHA
           kustomize build | kubectl apply -f -
 
     env:

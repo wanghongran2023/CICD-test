@@ -1,0 +1,65 @@
+name: backend-ci
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - 'backend/**'
+  pull_request:
+    branches: ["main"]
+    paths:
+      - 'backend/**'
+  workflow_dispatch:
+
+jobs:
+  Linting:
+    name: Linting Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Dependency
+        working-directory: backend
+        run: pipenv install
+
+      - name: Linting Job
+        working-directory: backend
+        run: pipenv run lint
+        continue-on-error: false
+
+  Test:
+    name: Test Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Dependency
+        working-directory: backend
+        run: pipenv install
+
+      - name: Run Test
+        working-directory: backend
+        run: pipenv run test
+        continue-on-error: false
+
+  Build:
+    name: Build Job
+    runs-on: ubuntu-latest
+    needs:
+      - Linting
+      - Test
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+
+      - name: Test Build Image
+        working-directory: backend
+        run: |
+          GIT_SHA=$(git rev-parse --short HEAD)
+          docker build --tag=backend:${GIT_SHA} .
+          docker run -p 5000:5000 --name mp-backend -d mp-backend
+          curl http://localhost:5000/movies
+          docker logs -f mp-backend
+          docker stop
