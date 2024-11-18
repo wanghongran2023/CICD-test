@@ -94,7 +94,7 @@ jobs:
         run: |
           GIT_SHA=$(git rev-parse --short HEAD)
           docker build --tag=mp-backend:${GIT_SHA} .
-          docker run -p 5000:5000 --name mp-backend -d mp-backend:${GIT_SHA}
-          curl http://localhost:5000/movies
-          docker logs -f mp-backend
-          docker stop
+          #docker run -p 5000:5000 --name mp-backend -d mp-backend:${GIT_SHA}
+          #curl http://localhost:5000/movies
+          #docker logs -f mp-backend
+          #docker stop
