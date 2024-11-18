@@ -86,6 +86,12 @@ jobs:
     needs:
       - Build
     steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
       - name: Deploy
         working-directory: frontend/k8s
         run: |
