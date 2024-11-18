@@ -10,11 +10,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-  steps:
-    - name: Code Checkout
-      uses: actions/checkout@v4
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
 
-    - name: Test Run
-      run: echo "Hello, World!"
+      - name: Test Run
+        run: echo "Hello, World!"
       
 
