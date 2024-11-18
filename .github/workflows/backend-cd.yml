@@ -14,10 +14,19 @@ jobs:
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
+      
+      - name: Set up pipenv
+        run: |
+          sudo apt update && sudo apt upgrade -y
+          sudo apt install python3 python3-pip -y
+          pip install --user pipenv
+          echo 'export PATH=$PATH:~/.local/bin' >> ~/.bashrc
+          source ~/.bashrc
+          pipenv --version
 
       - name: Install Dependency
         working-directory: backend
-        run: pipenv install
+        run: pipenv install --dev
 
       - name: Linting Job
         working-directory: backend
@@ -30,7 +39,16 @@ jobs:
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
-      
+
+      - name: Set up pipenv
+        run: |
+          sudo apt update && sudo apt upgrade -y
+          sudo apt install python3 python3-pip -y
+          pip install --user pipenv
+          echo 'export PATH=$PATH:~/.local/bin' >> ~/.bashrc
+          source ~/.bashrc
+          pipenv --version
+
       - name: Install Dependency
         working-directory: backend
         run: pipenv install
@@ -61,7 +79,6 @@ jobs:
           REPOSITORY_URI=$(aws ecr describe-repositories --repository-names backend --region us-east-1 --query "repositories[0].repositoryUri" --output text)
           docker tag backend:${GIT_SHA} $REPOSITORY_URI:${GIT_SHA}
           docker push $REPOSITORY_URI:${GIT_SHA}
-
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
