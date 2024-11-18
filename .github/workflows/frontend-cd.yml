@@ -15,8 +15,14 @@ jobs:
       - name: Code Checkout
         uses: actions/checkout@v4
 
+      - name: Install Dependency
+        working-directory: frontend
+        run: npm ci
+
       - name: Linting Job
-        run: ls -la
+        working-directory: frontend
+        run:  npm run lint
+        continue-on-error: false
 
   Test:
     name: Test Job
@@ -24,9 +30,28 @@ jobs:
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
+      
+      - name: Set Up Nvm
+        working-directory: frontend
+        run: |
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
 
-      - name: Test Job
-        run: echo "This is the first test"
+      - name: Use Correct NodeJS Version
+        working-directory: frontend
+        run: |
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          nvm install
+          nvm use
+
+      - name: Install Dependency
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run Test
+        working-directory: frontend
+        run: npm test
+        continue-on-error: false
 
   Build:
     name: Build Job
@@ -38,10 +63,23 @@ jobs:
       - name: Code Checkout
         uses: actions/checkout@v4
 
-      - name: Build
-        run: echo "This is a build job"
-      
-  
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build Image and Push
+        working-directory: frontend
+        run: |
+          echo $AWS_REGION
+          docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=frontend:latest .
+          REPOSITORY_URI=$(aws ecr describe-repositories --repository-names frontend --region us-east-1 --query "repositories[0].repositoryUri" --output text)
+          docker tag frontend:latest $REPOSITORY_URI:latest
+          docker push $REPOSITORY_URI:latest
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+
   Deploy:
     name: Deploy Job
     runs-on: ubuntu-latest
@@ -51,3 +89,4 @@ jobs:
       - name: Deploy
         run: echo "Run Deploy"
         
+

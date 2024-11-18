@@ -67,19 +67,8 @@ jobs:
       - name: Code Checkout
         uses: actions/checkout@v4
 
-      - name: Log in to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Build Image and Push
+      - name: Test Build Image
         working-directory: frontend
         run: |
-          echo $AWS_REGION
           docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=frontend:latest .
-          REPOSITORY_URI=$(aws ecr describe-repositories --repository-names frontend --region us-east-1 --query "repositories[0].repositoryUri" --output text)
-          docker tag frontend:latest $REPOSITORY_URI:latest
-          docker push $REPOSITORY_URI:latest
 
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
