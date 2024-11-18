@@ -75,7 +75,7 @@ jobs:
         run: |
           echo $AWS_REGION
           docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=frontend:latest .
-          REPOSITORY_URI=$(aws ecr describe-repositories --repository-names frontend --region $AWS_REGION --query "repositories[0].repositoryUri" --output text)
+          REPOSITORY_URI=$(aws ecr describe-repositories --repository-names frontend --region us-east-1 --query "repositories[0].repositoryUri" --output text)
           docker tag frontend:latest $REPOSITORY_URI:latest
           docker push $REPOSITORY_URI:latest
 
