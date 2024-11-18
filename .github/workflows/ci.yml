@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Linting Job
-        run: la -la
+        run: ls -la
 
   Test:
     name: Test Job
@@ -37,6 +37,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build
-        run: ehco "This is a build job"
+        run: echo "This is a build job"
       
 
