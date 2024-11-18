@@ -31,7 +31,7 @@ jobs:
 
       - name: Install Dependency
         working-directory: backend
-        run: pipenv install
+        run: pipenv install --dev
 
       - name: Linting Job
         working-directory: backend
