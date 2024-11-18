@@ -18,9 +18,12 @@ jobs:
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
-
+      - name: Move to Frontend
+        run: 
+          - ls -la
+          - cd frontend
       - name: Linting Job
-        run: ls -la
+        run: npm run lint
 
   Test:
     name: Test Job
