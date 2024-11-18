@@ -53,11 +53,10 @@ jobs:
           echo 'export PATH=$PATH:~/.local/bin' >> ~/.bashrc
           source ~/.bashrc
           pipenv --version
-          pipenv install flake8
 
       - name: Install Dependency
         working-directory: backend
-        run: pipenv install
+        run: pipenv install --dev
 
       - name: Run Test
         working-directory: backend
