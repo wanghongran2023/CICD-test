@@ -29,6 +29,14 @@ jobs:
           pipenv --version
           pipenv install flake8
 
+      - name: Cache Pipenv Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.local/share/virtualenvs
+          key: ${{ runner.os }}-pipenv-${{ hashFiles('backend/Pipfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pipenv-
+
       - name: Install Dependency
         working-directory: backend
         run: pipenv install --dev
@@ -53,6 +61,14 @@ jobs:
           echo 'export PATH=$PATH:~/.local/bin' >> ~/.bashrc
           source ~/.bashrc
           pipenv --version
+
+      - name: Cache Pipenv Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.local/share/virtualenvs
+          key: ${{ runner.os }}-pipenv-${{ hashFiles('backend/Pipfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pipenv-
 
       - name: Install Dependency
         working-directory: backend
