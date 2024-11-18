@@ -9,14 +9,34 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  Linting:
+    name: Linting Job
     runs-on: ubuntu-latest
-
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
 
-      - name: Test Run
-        run: echo "Hello, World!"
+      - name: Linting Job
+        run: la -la
+
+  Test:
+    name: Test Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+
+      - name: Test Job
+        run: echo "This is the first test"
+
+  Build:
+    name: Build Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: ehco "This is a build job"
       
 
