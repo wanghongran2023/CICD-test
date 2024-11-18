@@ -19,6 +19,15 @@ jobs:
       - name: Code Checkout
         uses: actions/checkout@v4
 
+      - name: Set up pipenv
+        run: |
+          sudo apt update && sudo apt upgrade -y
+          sudo apt install python3 python3-pip -y
+          pip install --user pipenv
+          echo 'export PATH=$PATH:~/.local/bin' >> ~/.bashrc
+          source ~/.bashrc
+          pipenv --version
+
       - name: Install Dependency
         working-directory: backend
         run: pipenv install
@@ -34,6 +43,15 @@ jobs:
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
+
+      - name: Set up pipenv
+        run: |
+          sudo apt update && sudo apt upgrade -y
+          sudo apt install python3 python3-pip -y
+          pip install --user pipenv
+          echo 'export PATH=$PATH:~/.local/bin' >> ~/.bashrc
+          source ~/.bashrc
+          pipenv --version
 
       - name: Install Dependency
         working-directory: backend
