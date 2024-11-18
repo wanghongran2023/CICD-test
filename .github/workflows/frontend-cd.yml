@@ -92,10 +92,19 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
 
-      - name: Configure kubectl for EKS
-        uses: aws-actions/amazon-eks-login@v1
-        with:
-          cluster-name: cluster
+      - name: EKS config
+        run: |
+          aws eks update-kubeconfig --name cluster --region us-east-1
+
+      - name: Install Kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+          kubectl version --client
+
+      - name: Check Kubectl
+        run: kubectl get pods
 
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
