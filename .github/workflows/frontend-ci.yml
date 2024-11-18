@@ -70,5 +70,6 @@ jobs:
       - name: Test Build Image
         working-directory: frontend
         run: |
-          docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=frontend:latest .
+          GIT_SHA=$(git rev-parse --short HEAD)
+          docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=frontend:${GIT_SHA} .
 
