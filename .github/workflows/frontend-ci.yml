@@ -73,9 +73,9 @@ jobs:
       - name: Build Image and Push
         working-directory: frontend
         run: |
-          docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=399608680309.dkr.ecr.us-east-1.amazonaws.com/frontend:latest .
-          REPOSITORY_URI=$(aws ecr describe-repositories --repository-names 399608680309.dkr.ecr.us-east-1.amazonaws.com/frontend --region $AWS_REGION --query "repositories[0].repositoryUri" --output text)
-          docker tag 399608680309.dkr.ecr.us-east-1.amazonaws.com/frontend:latest $REPOSITORY_URI:latest
+          docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=frontend:latest .
+          REPOSITORY_URI=$(aws ecr describe-repositories --repository-names frontend --region $AWS_REGION --query "repositories[0].repositoryUri" --output text)
+          docker tag frontend:latest $REPOSITORY_URI:latest
           docker push $REPOSITORY_URI:latest
 
     env:
