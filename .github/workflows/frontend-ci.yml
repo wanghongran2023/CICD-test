@@ -54,7 +54,7 @@ jobs:
 
       - name: Run Test
         working-directory: frontend
-        run: FAIL_TEST=true CI=true npm test
+        run: npm test
         continue-on-error: false
 
   Build:
@@ -67,7 +67,18 @@ jobs:
       - name: Code Checkout
         uses: actions/checkout@v4
 
-      - name: Build
-        run: echo "This is a build job"
-      
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
 
+      - name: Build Image and Push
+        working-directory: frontend
+        run: |
+          docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=399608680309.dkr.ecr.us-east-1.amazonaws.com/frontend:latest .
+          REPOSITORY_URI=$(aws ecr describe-repositories --repository-names 399608680309.dkr.ecr.us-east-1.amazonaws.com/frontend --region $AWS_REGION --query "repositories[0].repositoryUri" --output text)
+          docker tag 399608680309.dkr.ecr.us-east-1.amazonaws.com/frontend:latest $REPOSITORY_URI:latest
+          docker push $REPOSITORY_URI:latest
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
