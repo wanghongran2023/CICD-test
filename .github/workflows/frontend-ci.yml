@@ -54,7 +54,7 @@ jobs:
 
       - name: Run Test
         working-directory: frontend
-        run: npm test
+        run: FAIL_TEST=true CI=true npm test
         continue-on-error: false
 
   Build:
