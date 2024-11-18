@@ -23,7 +23,7 @@ jobs:
         run: npm install
       - name: Linting Job
         working-directory: frontend
-        run: FAIL_LINT=true npm run lint
+        run:  npm run lint
         continue-on-error: false
 
   Test:
@@ -32,9 +32,16 @@ jobs:
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
-
-      - name: Test Job
-        run: echo "This is the first test"
+      - name: Use Correct NodeJS Version
+        working-directory: frontend
+        run: nvm use
+      - name: Install Dependency
+        working-directory: frontend
+        run: npm ci
+      - name: Run Test
+        working-directory: frontend
+        run: npm test
+        continue-on-error: false
 
   Build:
     name: Build Job
