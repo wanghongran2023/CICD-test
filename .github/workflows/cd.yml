@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  Linting:
+    name: Linting Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+
+      - name: Linting Job
+        run: ls -la
+
+  Test:
+    name: Test Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+
+      - name: Test Job
+        run: echo "This is the first test"
+
+  Build:
+    name: Build Job
+    runs-on: ubuntu-latest
+    needs:
+      - Linting
+      - Test
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: echo "This is a build job"
+      
+  
+  Deploy:
+    name: Deploy Job
+    runs-on: ubuntu-latest
+    needs:
+      - Build
+    steps:
+      - name: Deploy
+        run: echo "Run Deploy"
+        
