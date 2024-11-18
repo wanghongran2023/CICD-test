@@ -86,7 +86,7 @@ jobs:
         working-directory: frontend
         run: |
           GIT_SHA=$(git rev-parse --short HEAD)
-        docker build --build-arg=REACT_APP_MOVIE_API_URL=http://af92714e44e434dcd86b6d6de76ee433-1744019683.us-east-1.elb.amazonaws.com  --tag=frontend:${GIT_SHA} .
+        docker build --build-arg REACT_APP_MOVIE_API_URL=http://af92714e44e434dcd86b6d6de76ee433-1744019683.us-east-1.elb.amazonaws.com  --tag=frontend:${GIT_SHA} .
           REPOSITORY_URI=$(aws ecr describe-repositories --repository-names frontend --region us-east-1 --query "repositories[0].repositoryUri" --output text)
           docker tag frontend:${GIT_SHA} $REPOSITORY_URI:${GIT_SHA}
           docker push $REPOSITORY_URI:${GIT_SHA}
