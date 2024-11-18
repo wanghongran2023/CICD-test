@@ -18,9 +18,11 @@ jobs:
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
+
       - name: Install Dependency
         working-directory: frontend
-        run: npm install
+        run: npm ci
+
       - name: Linting Job
         working-directory: frontend
         run:  npm run lint
@@ -32,12 +34,26 @@ jobs:
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
+      
+      - name: Set Up Nvm
+        working-directory: frontend
+        run: |
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          nvm install 16
+          nvm use 16
+          node -v
+          npm -v
+
       - name: Use Correct NodeJS Version
         working-directory: frontend
         run: nvm use
+
       - name: Install Dependency
         working-directory: frontend
         run: npm ci
+
       - name: Run Test
         working-directory: frontend
         run: npm test
